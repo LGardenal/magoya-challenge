@@ -33,4 +33,4 @@ jobs:
 
       - name: Deploy to Kind Cluster on EC2 Instance
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@<EC2_PUBLIC_IP> "kubectl apply -f kubernetes/deployment.yaml"
+          ssh -o StrictHostKeyChecking=no ubuntu@54.221.17.6 "kubectl apply -f kubernetes/deployment.yaml"

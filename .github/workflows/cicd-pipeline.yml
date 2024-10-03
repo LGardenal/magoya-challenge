@@ -37,7 +37,7 @@ jobs:
           
       - name: Copy YAML files to EC2
         run: |
-          scp -o StrictHostKeyChecking=no -r kubernetes ubuntu@54.221.17.6:/home/ubuntu/
+          scp -o StrictHostKeyChecking=no -r kubernetes ec2-user@54.221.17.6:/home/ubuntu/
 
       - name: Deploy to Kind Cluster on EC2 Instance
         run: |

@@ -48,5 +48,5 @@ jobs:
             kubectl cluster-info
             # export KUBECONFIG=$HOME/.kube/config
             kubectl apply -f /home/ec2-user/kubernetes/deployment.yaml
-            kubectl apply -f /home/ec2-user/kubernetes/service.yaml
+            kubectl apply -f /home/ec2-user/kubernetes/services.yaml
           EOF

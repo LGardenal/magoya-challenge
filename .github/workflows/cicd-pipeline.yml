@@ -41,7 +41,7 @@ jobs:
 
       - name: Deploy to Kind Cluster on EC2 Instance
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@54.221.17.6 << 'EOF'
+          ssh -o StrictHostKeyChecking=no ec2-user@54.221.17.6 << 'EOF'
             kubectl apply -f /home/ubuntu/kubernetes/deployment.yaml
             kubectl apply -f /home/ubuntu/kubernetes/service.yaml
           EOF

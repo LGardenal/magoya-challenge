@@ -31,6 +31,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Set up SSH for EC2 Connection
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Copy YAML files to EC2
+        run: |
+          scp -o StrictHostKeyChecking=no -r kubernetes ubuntu@54.221.17.6:/home/ubuntu/
+
       - name: Deploy to Kind Cluster on EC2 Instance
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@54.221.17.6 "kubectl apply -f kubernetes/deployment.yaml"
+          ssh -o StrictHostKeyChecking=no ubuntu@3.93.177.51 << 'EOF'
+            # Aplicar el deployment y service en el clúster de Kubernetes (Kind)
+            kubectl apply -f /home/ubuntu/kubernetes/deployment.yaml
+            kubectl apply -f /home/ubuntu/kubernetes/service.yaml
+          EOF

@@ -42,6 +42,8 @@ jobs:
       - name: Deploy to Kind Cluster on EC2 Instance
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@54.221.17.6 << 'EOF'
+            kind get clusters || kind create cluster --name magoya-cluster
+            export KUBECONFIG=$HOME/.kube/config
             kubectl apply -f /home/ec2-user/kubernetes/deployment.yaml
             kubectl apply -f /home/ec2-user/kubernetes/service.yaml
           EOF

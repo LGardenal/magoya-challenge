@@ -1,0 +1,5 @@
+.ssh/
+.vscode
+.env
+terraform/terraform.tfvars
+terraform/.terraform/

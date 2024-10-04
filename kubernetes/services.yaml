@@ -1,55 +1,42 @@
-name: CI/CD
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-service
+spec:
+  type: NodePort
+  selector: 
+    app: python-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+      nodePort: 30001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+spec:
+  type: NodePort
+  selector:
+    app: prometheus
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
+      nodePort: 30003
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+spec:
+  type: NodePort
+  selector:
+    app: grafana
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      nodePort: 30002
 
-on:
-  push:
-    branches: 
-      - main
-
-  workflow_dispatch:
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
-
-      - name: Install Dependencies
-        run: |
-          pip install flask
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Set up SSH agent
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
-          
-      - name: Copy YAML files to EC2
-        run: |
-          scp -o StrictHostKeyChecking=no -r kubernetes ec2-user@54.221.17.6:/home/ec2-user/
-
-      - name: Deploy to Kind Cluster on EC2 Instance
-        run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@54.221.17.6 << 'EOF'
-            mkdir -p /home/ec2-user/.kube
-            kind get clusters || kind create cluster --name magoya-cluster
-            kind get --name magoya-cluster kubeconfig > /home/ec2-user/.kube/config
-            kubectl cluster-info
-            # export KUBECONFIG=$HOME/.kube/config
-            cd /home/ec2-user/
-            docker build -t python-app-image:latest .
-            kind load docker-image python-app-image:latest
-            kubectl apply -f /home/ec2-user/kubernetes/deployment.yaml
-            kubectl apply -f /home/ec2-user/kubernetes/services.yaml
-          EOF

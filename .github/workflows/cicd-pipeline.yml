@@ -37,10 +37,9 @@ jobs:
           
       - name: Copy YAML files to EC2
         run: |
-          scp -o StrictHostKeyChecking=no -r kubernetes ec2-user@54.221.17.6:/home/ec2-user/
-          ssh -o StrictHostKeyChecking=no ec2-user@54.221.17.6 << 'EOF'
-            ls /home/ec2-user/kubernetes/
-            cat /home/ec2-user/kubernetes/services.yaml
+          scp -o StrictHostKeyChecking=no -r * ec2-user@54.221.17.6:/home/ec2-user/magoya-challenge/ << 'EOF'
+            ls /home/ec2-user/magoya-challenge/
+            cat /home/ec2-user/magoya-challenge/Dockerfile
           EOF
 
       - name: Deploy to Kind Cluster on EC2 Instance
@@ -51,6 +50,9 @@ jobs:
             kind get --name magoya-cluster kubeconfig > /home/ec2-user/.kube/config
             kubectl cluster-info
             # export KUBECONFIG=$HOME/.kube/config
+            cd /home/ec2-user/magoya-challenge/
+            docker build -t python-app-image:latest .
+            kind load docker-image python-app-image:latest
             kubectl apply -f /home/ec2-user/kubernetes/deployment.yaml
             kubectl apply -f /home/ec2-user/kubernetes/services.yaml
           EOF

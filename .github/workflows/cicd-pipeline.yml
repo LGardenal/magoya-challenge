@@ -38,6 +38,10 @@ jobs:
       - name: Copy YAML files to EC2
         run: |
           scp -o StrictHostKeyChecking=no -r kubernetes ec2-user@54.221.17.6:/home/ec2-user/
+          ssh -o StrictHostKeyChecking=no ec2-user@54.221.17.6 << 'EOF'
+            ls /home/ec2-user/kubernetes/
+            cat /home/ec2-user/kubernetes/services.yaml
+          EOF
 
       - name: Deploy to Kind Cluster on EC2 Instance
         run: |
